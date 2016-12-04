@@ -1,0 +1,29 @@
+version: '2'
+services:
+  php:
+    build: ./docker/php
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "80:80"
+
+  mysql:
+    build: ./docker/mysql
+    networks:
+      - backend
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    ports:
+      - "3306:3306"
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  mysql-data:
