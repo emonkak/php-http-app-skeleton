@@ -43,9 +43,7 @@ class Authenticator implements ServerMiddlewareInterface
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         $account = $this->authenticationService->authenticate();
-        if ($account !== null) {
-            $request = $request->withAttribute('_account', $account);
-        } else {
+        if ($account === null) {
             $path = $request->getUri()->getPath();
             $excluded = false;
 

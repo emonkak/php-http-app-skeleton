@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class AuthenticationService
 {
     /**
+     * @var Accont
+     */
+    private $account;
+
+    /**
      * @var AccountRepository
      */
     private $accountRepository;
@@ -33,6 +38,14 @@ class AuthenticationService
     /**
      * @return Account|null
      */
+    public function getAccount()
+    {
+        return $this->account ? $this->account : $this->authenticate();
+    }
+
+    /**
+     * @return Account|null
+     */
     public function authenticate()
     {
         $accountId = $this->session->get('account_id');
@@ -49,7 +62,7 @@ class AuthenticationService
             return null;
         }
 
-        return $account;
+        return $this->account = $account;
     }
 
     /**

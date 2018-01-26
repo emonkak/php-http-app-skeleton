@@ -2,6 +2,7 @@
 
 namespace App\Adapters\Http\Middlewares;
 
+use App\UseCases\AuthenticationService;
 use Interop\Http\Middleware\DelegateInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,6 +11,11 @@ use Xiaoler\Blade\Factory as ViewFactory;
 
 class ViewSharedVariables implements ServerMiddlewareInterface
 {
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
     /**
      * @var ViewFactory
      */
@@ -21,11 +27,16 @@ class ViewSharedVariables implements ServerMiddlewareInterface
     private $session;
 
     /**
-     * @param ViewFactory      $viewFactory
-     * @param SessionInterface $session
+     * @param AuthenticationService $authenticationService
+     * @param ViewFactory           $viewFactory
+     * @param SessionInterface      $session
      */
-    public function __construct(ViewFactory $viewFactory, SessionInterface $session)
+    public function __construct(
+        AuthenticationService $authenticationService,
+        ViewFactory $viewFactory,
+        SessionInterface $session)
     {
+        $this->authenticationService = $authenticationService;
         $this->viewFactory = $viewFactory;
         $this->session = $session;
     }
@@ -38,7 +49,7 @@ class ViewSharedVariables implements ServerMiddlewareInterface
         $this->viewFactory->share([
             'request' => $request,
             'uri' => $request->getUri(),
-            'account' => $request->getAttribute('_account'),
+            'account' => $this->authenticationService->getAccount(),
             'session' => $this->session,
             'flashes' => $this->session->getFlashBag(),
         ]);
