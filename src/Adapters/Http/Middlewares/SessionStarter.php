@@ -29,9 +29,6 @@ class SessionStarter implements ServerMiddlewareInterface
     {
         $this->session->start();
 
-        $request = $request->withAttribute('_session', $this->session);
-        $request = $request->withAttribute('_flashes', $this->session->getFlashBag());
-
         $response = $delegate->process($request);
 
         $this->session->save();

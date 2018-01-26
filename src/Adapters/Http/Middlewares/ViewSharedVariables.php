@@ -5,6 +5,7 @@ namespace App\Adapters\Http\Middlewares;
 use Interop\Http\Middleware\DelegateInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Xiaoler\Blade\Factory as ViewFactory;
 
 class ViewSharedVariables implements ServerMiddlewareInterface
@@ -15,12 +16,18 @@ class ViewSharedVariables implements ServerMiddlewareInterface
     private $viewFactory;
 
     /**
+     * @var SessionInterface
+     */
+    private $session;
+
+    /**
      * @param ViewFactory      $viewFactory
      * @param SessionInterface $session
      */
-    public function __construct(ViewFactory $viewFactory)
+    public function __construct(ViewFactory $viewFactory, SessionInterface $session)
     {
         $this->viewFactory = $viewFactory;
+        $this->session = $session;
     }
 
     /**
@@ -32,8 +39,8 @@ class ViewSharedVariables implements ServerMiddlewareInterface
             'request' => $request,
             'uri' => $request->getUri(),
             'account' => $request->getAttribute('_account'),
-            'session' => $request->getAttribute('_session'),
-            'flashes' => $request->getAttribute('_flashes'),
+            'session' => $this->session,
+            'flashes' => $this->session->getFlashBag(),
         ]);
 
         return $delegate->process($request);

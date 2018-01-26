@@ -4,13 +4,14 @@ namespace App\Adapters\Http\Handlers\Accounts;
 
 use App\Supports\Respondable;
 use App\Supports\Validations;
+use App\UseCases\AuthenticationService;
 use App\UseCases\SignUpException;
 use App\UseCases\SignUpService;
-use App\UseCases\AuthenticationService;
 use Emonkak\HttpException\BadRequestHttpException;
 use Interop\Http\Middleware\DelegateInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Xiaoler\Blade\Factory as ViewFactory;
 
 class Create implements ServerMiddlewareInterface
@@ -21,6 +22,11 @@ class Create implements ServerMiddlewareInterface
      * @var AuthenticationService
      */
     private $authenticationService;
+
+    /**
+     * @var SessionInterface
+     */
+    private $session;
 
     /**
      * @var SignUpService
@@ -36,13 +42,16 @@ class Create implements ServerMiddlewareInterface
      * @param AuthenticationService $authenticationService
      * @param SignUpService         $signUpService
      * @param ViewFactory           $viewFactory
+     * @param SessionInterface      $session
      */
     public function __construct(
         AuthenticationService $authenticationService,
+        SessionInterface $session,
         SignUpService $signUpService,
         ViewFactory $viewFactory
     ) {
         $this->authenticationService = $authenticationService;
+        $this->session = $session;
         $this->signUpService = $signUpService;
         $this->viewFactory = $viewFactory;
     }
@@ -64,7 +73,7 @@ class Create implements ServerMiddlewareInterface
         }
 
         if ($body['password'] !== $body['password_confirmation']) {
-            $request->getAttribute('_flashes')
+            $this->session->getFlashBag()
                 ->add('danger', 'Password does not match the confirmation password.');
             goto ERROR;
         }
@@ -72,7 +81,7 @@ class Create implements ServerMiddlewareInterface
         try {
             $account = $this->signUpService->signUp($body['email_address'], $body['password_confirmation']);
         } catch (SignUpException $e) {
-            $request->getAttribute('_flashes')
+            $this->session->getFlashBag()
                 ->add('danger', $e->getMessage());
             goto ERROR;
         }

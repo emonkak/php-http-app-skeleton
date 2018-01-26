@@ -11,6 +11,7 @@ use Emonkak\HttpException\BadRequestHttpException;
 use Interop\Http\Middleware\DelegateInterface;
 use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Xiaoler\Blade\Factory as ViewFactory;
 
 class Create implements ServerMiddlewareInterface
@@ -23,19 +24,27 @@ class Create implements ServerMiddlewareInterface
     private $authenticationService;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * @var ViewFactory
      */
     private $viewFactory;
 
     /**
      * @param AuthenticationService $authenticationService
+     * @param SessionInterface      $session
      * @param ViewFactory           $viewFactory
      */
     public function __construct(
         AuthenticationService $authenticationService,
+        SessionInterface $session,
         ViewFactory $viewFactory
     ) {
         $this->authenticationService = $authenticationService;
+        $this->session = $session;
         $this->viewFactory = $viewFactory;
     }
 
@@ -59,7 +68,7 @@ class Create implements ServerMiddlewareInterface
             $body['password']
         );
         if ($account === null) {
-            $request->getAttribute('_flashes')
+            $this->session->getFlashBag()
                 ->add('danger', 'You entered the wrong email address or password. Please re-enter your email address and password.');
             goto ERROR;
         }
