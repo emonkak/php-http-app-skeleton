@@ -7,12 +7,7 @@ use Emonkak\Orm\InsertBuilder;
 
 trait Persistable
 {
-    /**
-     * @param string       $table
-     * @param object       $entity
-     * @param PDOInterface $pdo
-     */
-    public function persist($table, $entity, PDOInterface $pdo)
+    public function persist(string $table, $entity, PDOInterface $pdo): void
     {
         $array = $entity->toArray();
 
@@ -21,17 +16,25 @@ trait Persistable
             ->values(array_values($array))
             ->execute($pdo);
 
-        $class = get_class($entity);
-        $idAttribute = snake_case(class_basename($class)) . '_id';
+        $ref = new \ReflectionObject($entity);
 
-        $setter = \Closure::bind(static function($entity, $key, $value) {
-            $entity->$key = $value;
-        }, null, $class);
+        $idValue = $pdo->lastInsertId();
+        $idAttribute = snake_case($ref->getShortName()) . '_id';
 
-        $setter($entity, $idAttribute, $pdo->lastInsertId());
+        if ($ref->hasProperty($idAttribute)) {
+            $prop = $ref->getProperty($idAttribute);
+            $prop->setAccessible(true);
+            $prop->setValue($entity, $idValue);
+        }
 
-        if (method_exists($entity, 'setCreatedAt')) {
-            $entity->setCreatedAt(new \DateTime());
+        $persistedAt = date('Y-m-d H:i:s');
+
+        foreach (['created_at', 'updated_at'] as $attribute) {
+            if ($ref->hasProperty($attribute)) {
+                $prop = $ref->getProperty($attribute);
+                $prop->setAccessible(true);
+                $prop->setValue($entity, $persistedAt);
+            }
         }
     }
 }

@@ -6,8 +6,8 @@ use Emonkak\HttpMiddleware\Application as BaseApplication;
 use Emonkak\HttpMiddleware\Dispatcher;
 use Emonkak\HttpMiddleware\ErrorLogger;
 use Emonkak\Router\RouterInterface;
-use Interop\Container\ContainerInterface;
 use Monolog\ErrorHandler;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
@@ -23,80 +23,48 @@ class Application extends BaseApplication
      */
     private $container;
 
-    /**
-     * @param string $baseDir
-     */
-    public function __construct($baseDir)
+    public function __construct(string $baseDir)
     {
-        parent::__construct();
-
         $this->baseDir = $baseDir;
         $this->container = $this->prepareContainer();
     }
 
     /**
      * Creates a path from the application root.
-     *
-     * @param string|null $path
-     * @return string
      */
-    public function path($path = null)
+    public function path(string $path = ''): string
     {
-        return $this->baseDir . ($path != '' ? '/' . $path : $path);
+        return $this->baseDir . ($path !== '' ? '/' . $path : $path);
     }
 
-    /**
-     * @param string $middleware
-     * @return $this
-     */
-    public function register($middleware)
+    public function register(string $middleware): Application
     {
         return $this->pipe($this->container->get($middleware));
     }
 
-    /**
-     * @param string   $middleware
-     * @param callable $predicate
-     * @return $this
-     */
-    public function registerIf($middleware, callable $predicate)
+    public function registerIf(string $middleware, callable $predicate): Application
     {
         return $this->pipeIf($this->container->get($middleware), $predicate);
     }
 
-    /**
-     * @param string $middleware
-     * @param string $path
-     * @return $this
-     */
-    public function registerOn($middleware, $path)
+    public function registerOn(string $middleware, string $path): Application
     {
         return $this->pipeOn($this->container->get($middleware), $path);
     }
 
-    /**
-     * @param strin $errorMiddleware
-     * @return $this
-     */
-    public function registerOnError($errorMiddleware)
+    public function registerOnError($errorMiddleware): Application
     {
         return $this->pipeOnError($this->container->get($errorMiddleware));
     }
 
-    /**
-     * @return $this
-     */
-    public function registerDispatcher()
+    public function registerDispatcher(): Application
     {
         $router = $this->prepareRouter();
 
         return $this->pipe(new Dispatcher($router, $this->container));
     }
 
-    /**
-     * @return $this
-     */
-    public function registerErrorHandler()
+    public function registerErrorHandler(): Application
     {
         $logger = $this->container->get(LoggerInterface::class);
 
@@ -107,18 +75,12 @@ class Application extends BaseApplication
         return $this->pipeOnError(new ErrorLogger($logger));
     }
 
-    /**
-     * @return ContainerInterface
-     */
-    protected function prepareContainer()
+    protected function prepareContainer(): ContainerInterface
     {
         return require $this->path('bootstrap/container.php');
     }
 
-    /**
-     * @return RouterInterface
-     */
-    protected function prepareRouter()
+    protected function prepareRouter(): RouterInterface
     {
         return require $this->path('bootstrap/router.php');
     }

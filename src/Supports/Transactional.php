@@ -12,7 +12,6 @@ trait Transactional
     private $transaction;
 
     /**
-     * @param callable $action
      * @return mixed
      */
     public function transaction(callable $action)

@@ -24,11 +24,6 @@ class SignUpService
      */
     private $accountRepository;
 
-    /**
-     * @param PDOTransactionInterface $transaction
-     * @param PasswordPolicy          $passwordPolicy
-     * @param AccountRepository       $accountRepository
-     */
     public function __construct(
         PDOTransactionInterface $transaction,
         PasswordPolicy $passwordPolicy,
@@ -40,14 +35,11 @@ class SignUpService
     }
 
     /**
-     * @param string $emailAddress
-     * @param string $password
-     * @return Account
      * @throws DuplicateEmailAddressException
      * @throws InvalidEmailAddressException
      * @throws PassswordPolicyUnsatisfied
      */
-    public function signUp($emailAddress, $password)
+    public function signUp(string $emailAddress, string $password): Account
     {
         if (!EmailAddress::isValid($emailAddress)) {
             throw new SignUpException('The email address is invalid.');
@@ -65,7 +57,7 @@ class SignUpService
 
             $account = Account::create(
                 new EmailAddress($emailAddress),
-                Password::fromString($password)
+                Password::generate($password)
             );
 
             $this->accountRepository->store($account);

@@ -4,11 +4,11 @@ namespace App\Adapters\Http\Handlers\Sessions;
 
 use App\Supports\Respondable;
 use App\UseCases\AuthenticationService;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Delete implements ServerMiddlewareInterface
+class Delete implements RequestHandlerInterface
 {
     use Respondable;
 
@@ -17,18 +17,12 @@ class Delete implements ServerMiddlewareInterface
      */
     private $authenticationService;
 
-    /**
-     * @param AuthenticationService $authenticationService
-     */
     public function __construct(AuthenticationService $authenticationService)
     {
         $this->authenticationService = $authenticationService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->authenticationService->revoke();
 

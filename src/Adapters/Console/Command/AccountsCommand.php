@@ -15,9 +15,6 @@ class AccountsCommand extends Command
      */
     private $accountRepository;
 
-    /**
-     * @param AccountRepository $accountRepository
-     */
     public function __construct(AccountRepository $accountRepository)
     {
         parent::__construct();
@@ -25,19 +22,13 @@ class AccountsCommand extends Command
         $this->accountRepository = $accountRepository;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('accounts')
             ->setDescription('Dumps the registered accounts.');
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $accounts = $this->accountRepository->allAccounts()
             ->select(function($account) {

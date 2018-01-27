@@ -25,10 +25,6 @@ class Account
      */
     private $password;
 
-    /**
-     * @param EmailAddress $emailAddress
-     * @param Password     $password
-     */
     public static function create(EmailAddress $emailAddress, Password $password)
     {
         $account = new Account();
@@ -37,50 +33,32 @@ class Account
         return $account;
     }
 
-    /**
-     * @return integer
-     */
-    public function getAccountId()
+    public function getAccountId(): int
     {
         return $this->account_id;
     }
 
-    /**
-     * @return EmailAddress
-     */
-    public function getEmailAddress()
+    public function getEmailAddress(): EmailAddress
     {
         return new EmailAddress($this->email_address);
     }
 
-    /**
-     * @return Password
-     */
-    public function getPassword()
+    public function getPassword(): Password
     {
         return new Password($this->password);
     }
 
-    /**
-     * @param integer $account_id
-     */
-    public function setAccountId($account_id)
+    private function setAccountId(int $account_id): void
     {
         $this->account_id = $account_id;
     }
 
-    /**
-     * @param EmailAddress $email_address
-     */
-    public function setEmailAddress(EmailAddress $email_address)
+    private function setEmailAddress(EmailAddress $email_address): void
     {
         $this->email_address = $email_address->address();
     }
 
-    /**
-     * @param Password $password
-     */
-    public function setPassword(Password $password)
+    private function setPassword(Password $password): void
     {
         $this->password = $password->hash();
     }

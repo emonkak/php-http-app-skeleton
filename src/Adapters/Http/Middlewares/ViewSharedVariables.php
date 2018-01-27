@@ -3,13 +3,14 @@
 namespace App\Adapters\Http\Middlewares;
 
 use App\UseCases\AuthenticationService;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Xiaoler\Blade\Factory as ViewFactory;
 
-class ViewSharedVariables implements ServerMiddlewareInterface
+class ViewSharedVariables implements MiddlewareInterface
 {
     /**
      * @var AuthenticationService
@@ -26,11 +27,6 @@ class ViewSharedVariables implements ServerMiddlewareInterface
      */
     private $session;
 
-    /**
-     * @param AuthenticationService $authenticationService
-     * @param ViewFactory           $viewFactory
-     * @param SessionInterface      $session
-     */
     public function __construct(
         AuthenticationService $authenticationService,
         ViewFactory $viewFactory,
@@ -41,10 +37,7 @@ class ViewSharedVariables implements ServerMiddlewareInterface
         $this->session = $session;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $this->viewFactory->share([
             'request' => $request,
@@ -54,6 +47,6 @@ class ViewSharedVariables implements ServerMiddlewareInterface
             'flashes' => $this->session->getFlashBag(),
         ]);
 
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

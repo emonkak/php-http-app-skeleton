@@ -3,18 +3,15 @@
 namespace App\Adapters\Http\Handlers\Api;
 
 use App\Supports\Respondable;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Ping implements ServerMiddlewareInterface
+class Ping implements RequestHandlerInterface
 {
     use Respondable;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return $this->json(['ack' => microtime(true)]);
     }

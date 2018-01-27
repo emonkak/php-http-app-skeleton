@@ -23,10 +23,6 @@ class AuthenticationService
      */
     private $session;
 
-    /**
-     * @param AccountRepository $accountRepository
-     * @param SessionInterface  $session
-     */
     public function __construct(
         AccountRepository $accountRepository,
         SessionInterface $session
@@ -35,18 +31,12 @@ class AuthenticationService
         $this->session = $session;
     }
 
-    /**
-     * @return Account|null
-     */
-    public function getAccount()
+    public function getAccount(): ?Account
     {
         return $this->account ? $this->account : $this->authenticate();
     }
 
-    /**
-     * @return Account|null
-     */
-    public function authenticate()
+    public function authenticate(): ?Account
     {
         $accountId = $this->session->get('account_id');
 
@@ -65,20 +55,12 @@ class AuthenticationService
         return $this->account = $account;
     }
 
-    /**
-     * @param Account $account
-     */
-    public function authorize(Account $account)
+    public function authorize(Account $account): void
     {
         $this->session->set('account_id', $account->getAccountId());
     }
 
-    /**
-     * @param string $emailAddress
-     * @param string $password
-     * @return Account|null
-     */
-    public function attempt($emailAddress, $password)
+    public function attempt(string $emailAddress, string $password): ?Account
     {
         $account = $this->accountRepository->accountOfEmailAddress($emailAddress);
 
@@ -95,7 +77,7 @@ class AuthenticationService
         return $account;
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->session->remove('account_id');
     }

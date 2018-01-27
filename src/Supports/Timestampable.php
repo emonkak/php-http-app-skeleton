@@ -14,34 +14,22 @@ trait Timestampable
      */
     private $updated_at;
 
-    /**
-     * @return \DatetTimeImmutable|null
-     */
-    public function getCreatedAt()
+    public function getCreatedAt(): ?\DatetTimeImmutable
     {
         return $this->created_at !== null ? new \DatetTimeImmutable($this->created_at) : null;
     }
 
-    /**
-     * @return \DatetTimeImmutable|null
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?\DatetTimeImmutable
     {
         return $this->updated_at !== null ? new \DatetTimeImmutable($this->updated_at) : null;
     }
 
-    /**
-     * @param \DateTimeInterface $created_at
-     */
-    public function setCreatedAt(\DateTimeInterface $created_at)
+    private function setCreatedAt(\DateTimeInterface $created_at): void
     {
         $this->created_at = $created_at->format('Y-m-d H:i:s');
     }
 
-    /**
-     * @param \DateTimeInterface $created_at
-     */
-    public function setUpdatedAt(\DateTimeInterface $updated_at)
+    private function setUpdatedAt(\DateTimeInterface $updated_at): void
     {
         $this->updated_at = $updated_at->format('Y-m-d H:i:s');
     }

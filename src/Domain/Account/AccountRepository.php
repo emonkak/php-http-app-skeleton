@@ -22,30 +22,20 @@ class AccountRepository
      */
     private $fetcher;
 
-    /**
-     * @param PDOInterface $pdo
-     */
     public function __construct(PDOInterface $pdo)
     {
         $this->pdo = $pdo;
         $this->fetcher = new ClassFetcher(Account::class);
     }
 
-    /**
-     * @return Account[]
-     */
-    public function allAccounts()
+    public function allAccounts(): array
     {
         return (new SelectBuilder())
             ->from('accounts')
             ->getResult($this->pdo, $this->fetcher);
     }
 
-    /**
-     * @param integer $accountId
-     * @return Account|null
-     */
-    public function accountOfId($accountId)
+    public function accountOfId(int $accountId): ?Account
     {
         return (new SelectBuilder())
             ->from('accounts')
@@ -54,11 +44,7 @@ class AccountRepository
             ->firstOrDefault();
     }
 
-    /**
-     * @param string $emailAddress
-     * @return Account|null
-     */
-    public function accountOfEmailAddress($emailAddress)
+    public function accountOfEmailAddress(string $emailAddress): ?Account
     {
         return (new SelectBuilder())
             ->from('accounts')
@@ -67,11 +53,7 @@ class AccountRepository
             ->firstOrDefault();
     }
 
-    /**
-     * @param string $emailAddress
-     * @return Account|null
-     */
-    public function lockedAccountOfEmail($emailAddress)
+    public function lockedAccountOfEmail(string $emailAddress): ?Account
     {
         return (new SelectBuilder())
             ->from('accounts')
@@ -81,10 +63,7 @@ class AccountRepository
             ->firstOrDefault();
     }
 
-    /**
-     * @param Account $account
-     */
-    public function store(Account $account)
+    public function store(Account $account): void
     {
         $this->persist('accounts', $account, $this->pdo);
     }

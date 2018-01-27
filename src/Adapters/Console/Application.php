@@ -3,6 +3,7 @@
 namespace App\Adapters\Console;
 
 use Monolog\ErrorHandler;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\Command;
@@ -14,12 +15,7 @@ class Application extends BaseApplication
      */
     private $container;
 
-    /**
-     * @param string $baseDir
-     * @param string $name
-     * @param string $version
-     */
-    public function __construct($baseDir, $name = 'UNKNOWN', $version = 'UNKNOWN')
+    public function __construct(string $baseDir, string $name = 'UNKNOWN', string $version = 'UNKNOWN')
     {
         parent::__construct($name, $version);
 
@@ -29,40 +25,18 @@ class Application extends BaseApplication
 
     /**
      * Creates a path from the application root.
-     *
-     * @param string|null $path
-     * @return string
      */
-    public function path($path = null)
+    public function path(string $path = ''): string
     {
-        return $this->baseDir . ($path != '' ? '/' . $path : $path);
+        return $this->baseDir . ($path !== '' ? '/' . $path : $path);
     }
 
-    /**
-     * @param string $command
-     * @return Command
-     */
-    public function register($command)
+    public function registerCommand(string $command): Command
     {
         return $this->add($this->container->get($command));
     }
 
-    /**
-     * @param string[] $commands
-     * @return $this
-     */
-    public function registerCommands(array $commands)
-    {
-        foreach ($commands as $command) {
-            $this->add($this->container->get($command));
-        }
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function registerErrorHandler()
+    public function registerErrorHandler(): Application
     {
         $logger = $this->container->get(LoggerInterface::class);
 
@@ -71,7 +45,7 @@ class Application extends BaseApplication
         return $this;
     }
 
-    protected function prepareContainer()
+    protected function prepareContainer(): ContainerInterface
     {
         return require $this->path('bootstrap/container.php');
     }

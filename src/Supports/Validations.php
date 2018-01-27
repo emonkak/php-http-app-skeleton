@@ -4,11 +4,7 @@ namespace App\Supports;
 
 final class Validations
 {
-    /**
-     * @param array $validations
-     * @return callable
-     */
-    public static function shape(array $validations)
+    public static function shape(array $validations): callable
     {
         return function($target) use ($validations) {
             if (!is_array($target)) {
@@ -27,11 +23,7 @@ final class Validations
         };
     }
 
-    /**
-     * @param callable $validation
-     * @return callable
-     */
-    public static function arrayOf(callable $validation)
+    public static function arrayOf(callable $validation): callable
     {
         return function($target) use ($validation) {
             if (!is_array($target)) {
@@ -48,11 +40,7 @@ final class Validations
         };
     }
 
-    /**
-     * @param callable[] $validations
-     * @return callable
-     */
-    public static function oneOf(array $validations)
+    public static function oneOf(array $validations): callable
     {
         return function($target) use ($validations) {
             foreach ($validations as $validation) {
@@ -65,11 +53,7 @@ final class Validations
         };
     }
 
-    /**
-     * @param callable $validation
-     * @return callable
-     */
-    public static function optional(callable $validation)
+    public static function optional(callable $validation): callable
     {
         return function($target) use ($validation) {
             return $target === null || $validation($target);

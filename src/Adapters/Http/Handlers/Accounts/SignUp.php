@@ -3,12 +3,12 @@
 namespace App\Adapters\Http\Handlers\Accounts;
 
 use App\Supports\Respondable;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Xiaoler\Blade\Factory as ViewFactory;
 
-class SignUp implements ServerMiddlewareInterface
+class SignUp implements RequestHandlerInterface
 {
     use Respondable;
 
@@ -17,18 +17,12 @@ class SignUp implements ServerMiddlewareInterface
      */
     private $viewFactory;
 
-    /**
-     * @param ViewFactory $viewFactory
-     */
     public function __construct(ViewFactory $viewFactory)
     {
         $this->viewFactory = $viewFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $view = $this->viewFactory->make('accounts/sign_up');
 

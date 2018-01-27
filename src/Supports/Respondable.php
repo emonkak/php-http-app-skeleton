@@ -11,46 +11,22 @@ use Zend\Diactoros\Response\RedirectResponse;
 
 trait Respondable
 {
-    /**
-     * @param string  $html
-     * @param integer $statusCode
-     * @param array   $headers
-     * @return ResponseInterface
-     */
-    public function html($html, $statusCode = 200, array $headers = [])
+    protected function html(string $html, int $statusCode = 200, array $headers = []): ResponseInterface
     {
         return new HtmlResponse($html, $statusCode, $headers);
     }
 
-    /**
-     * @param View    $view
-     * @param integer $statusCode
-     * @param array   $headers
-     * @return ResponseInterface
-     */
-    public function render(View $view, $statusCode = 200, array $headers = [])
+    protected function render(View $view, int $statusCode = 200, array $headers = []): ResponseInterface
     {
         return new HtmlResponse($view->render(), $statusCode, $headers);
     }
 
-    /**
-     * @param mixed   $data
-     * @param integer $statusCode
-     * @param array   $headers
-     * @return ResponseInterface
-     */
-    public function json($data, $statusCode = 200, array $headers = [])
+    protected function json($data, int $statusCode = 200, array $headers = []): ResponseInterface
     {
         return new JsonResponse($data, $statusCode, $headers);
     }
 
-    /**
-     * @param string|UriInterface $uri
-     * @param integer             $statusCode
-     * @param array               $headers
-     * @return ResponseInterface
-     */
-    public function redirect($uri, $statusCode = 302)
+    protected function redirect(string $uri, int $statusCode = 302): ResponseInterface
     {
         return new RedirectResponse($uri, $statusCode);
     }

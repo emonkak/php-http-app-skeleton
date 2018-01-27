@@ -12,7 +12,7 @@ $app = new App\Adapters\Http\Application(realpath(__DIR__ . '/../'));
 
 $app->pipe(
     (new Middlewares\MethodOverride())
-        ->post(['PATCH', 'PUT', 'DELETE'])
+        ->postMethods(['PATCH', 'PUT', 'DELETE'])
         ->parsedBodyParameter('_method')
 );
 
@@ -27,8 +27,6 @@ $app->registerDispatcher();
 $app->registerErrorHandler();
 
 if (!getenv('APP_DEBUG')) {
-    $app->register(App\Adapters\Http\Middlewares\ErrorPage::class);
-
     $app->registerOnError(App\Adapters\Http\Middlewares\ErrorPage::class);
 }
 

@@ -4,11 +4,7 @@ namespace App\Domain\Account;
 
 class PasswordPolicy
 {
-    /**
-     * @param string $password
-     * @return boolean
-     */
-    public function isSatisfied($password)
+    public function isSatisfied(string $password): bool
     {
         return strlen($password) >= 6;
     }

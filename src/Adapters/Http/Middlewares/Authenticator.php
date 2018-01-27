@@ -4,12 +4,13 @@ namespace App\Adapters\Http\Middlewares;
 
 use App\Domain\Account\Account;
 use App\UseCases\AuthenticationService;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 
-class Authenticator implements ServerMiddlewareInterface
+class Authenticator implements MiddlewareInterface
 {
     /**
      * @var AuthenticationService
@@ -29,18 +30,12 @@ class Authenticator implements ServerMiddlewareInterface
      */
     private $redirectTo = '/sessions/login';
 
-    /**
-     * @param AuthenticationService $authenticationService
-     */
     public function __construct(AuthenticationService $authenticationService)
     {
         $this->authenticationService = $authenticationService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $account = $this->authenticationService->authenticate();
         if ($account === null) {
@@ -58,6 +53,6 @@ class Authenticator implements ServerMiddlewareInterface
                 return new RedirectResponse($this->redirectTo);
             }
         }
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

@@ -8,13 +8,13 @@ use App\UseCases\AuthenticationService;
 use App\UseCases\SignUpException;
 use App\UseCases\SignUpService;
 use Emonkak\HttpException\BadRequestHttpException;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Xiaoler\Blade\Factory as ViewFactory;
 
-class Create implements ServerMiddlewareInterface
+class Create implements RequestHandlerInterface
 {
     use Respondable;
 
@@ -38,12 +38,6 @@ class Create implements ServerMiddlewareInterface
      */
     private $viewFactory;
 
-    /**
-     * @param AuthenticationService $authenticationService
-     * @param SignUpService         $signUpService
-     * @param ViewFactory           $viewFactory
-     * @param SessionInterface      $session
-     */
     public function __construct(
         AuthenticationService $authenticationService,
         SessionInterface $session,
@@ -56,10 +50,7 @@ class Create implements ServerMiddlewareInterface
         $this->viewFactory = $viewFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
 

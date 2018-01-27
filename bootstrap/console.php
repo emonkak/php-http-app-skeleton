@@ -6,9 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $app = new App\Adapters\Console\Application(realpath(__DIR__ . '/../'));
 
-$app->registerCommands([
-    App\Adapters\Console\Command\AccountsCommand::class,
-]);
+$app->registerCommand(App\Adapters\Console\Command\AccountsCommand::class);
 
 $app->registerErrorHandler();
 

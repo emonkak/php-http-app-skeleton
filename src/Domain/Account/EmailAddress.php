@@ -9,19 +9,12 @@ class EmailAddress
      */
     private $address;
 
-    /**
-     * @param string $address
-     * @return boolean
-     */
-    public static function isValid($address)
+    public static function isValid(string $address): bool
     {
         return filter_var($address, FILTER_VALIDATE_EMAIL);
     }
 
-    /**
-     * @param string $address
-     */
-    public function __construct($address)
+    public function __construct(string $address)
     {
         if (!self::isValid($address)) {
             throw new \InvalidArgumentException('Invalid email address');
@@ -30,18 +23,12 @@ class EmailAddress
         $this->address = $address;
     }
 
-    /**
-     * @return string
-     */
-    public function address()
+    public function address(): string
     {
         return $this->address;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->address;
     }
