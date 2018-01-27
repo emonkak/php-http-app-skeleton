@@ -7,6 +7,7 @@ return (new TrieRouterBuilder())
     ->get('/', Handlers\Index::class)
 
     ->get('/api/ping', Handlers\Api\Ping::class)
+    ->get('/api/hello/:name', Handlers\Api\Hello::class)
 
     ->get('/accounts/sign_up', Handlers\Accounts\SignUp::class)
     ->post('/accounts', Handlers\Accounts\Create::class)
