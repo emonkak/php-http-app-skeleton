@@ -8,7 +8,9 @@ if (getenv('APP_DEBUG')) {
     Symfony\Component\Debug\Debug::enable();
 }
 
-$app = new App\Adapters\Http\Application(realpath(__DIR__ . '/../'));
+$app = new App\Adapters\Http\Application(
+    require(__DIR__ . '/container.php')
+);
 
 $app->pipe(
     (new Middlewares\MethodOverride())
@@ -22,7 +24,7 @@ $app->register(App\Adapters\Http\Middlewares\Authenticator::class);
 
 $app->register(App\Adapters\Http\Middlewares\ViewSharedVariables::class);
 
-$app->registerDispatcher();
+$app->registerDispatcher(require(__DIR__ . '/router.php'));
 
 $app->registerErrorHandler();
 

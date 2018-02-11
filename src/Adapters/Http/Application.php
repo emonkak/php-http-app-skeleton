@@ -14,27 +14,13 @@ use Psr\Log\LoggerInterface;
 class Application extends BaseApplication
 {
     /**
-     * @var string
-     */
-    private $baseDir;
-
-    /**
      * @var ContainerInterface
      */
     private $container;
 
-    public function __construct(string $baseDir)
+    public function __construct(ContainerInterface $container)
     {
-        $this->baseDir = $baseDir;
-        $this->container = $this->prepareContainer();
-    }
-
-    /**
-     * Creates a path from the application root.
-     */
-    public function path(string $path = ''): string
-    {
-        return $this->baseDir . ($path !== '' ? '/' . $path : $path);
+        $this->container = $container;
     }
 
     public function register(string $middleware): Application
@@ -57,10 +43,8 @@ class Application extends BaseApplication
         return $this->pipeOnError($this->container->get($errorMiddleware));
     }
 
-    public function registerDispatcher(): Application
+    public function registerDispatcher(RouterInterface $router): Application
     {
-        $router = $this->prepareRouter();
-
         return $this->pipe(new Dispatcher($router, $this->container));
     }
 
@@ -73,15 +57,5 @@ class Application extends BaseApplication
         $errorHandler->registerFatalHandler();
 
         return $this->pipeOnError(new ErrorLogger($logger));
-    }
-
-    protected function prepareContainer(): ContainerInterface
-    {
-        return require $this->path('bootstrap/container.php');
-    }
-
-    protected function prepareRouter(): RouterInterface
-    {
-        return require $this->path('bootstrap/router.php');
     }
 }

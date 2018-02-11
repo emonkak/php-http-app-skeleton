@@ -30,8 +30,8 @@ class ViewSharedVariables implements MiddlewareInterface
     public function __construct(
         AuthenticationService $authenticationService,
         ViewFactory $viewFactory,
-        SessionInterface $session)
-    {
+        SessionInterface $session
+    ) {
         $this->authenticationService = $authenticationService;
         $this->viewFactory = $viewFactory;
         $this->session = $session;

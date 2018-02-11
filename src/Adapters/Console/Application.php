@@ -15,20 +15,11 @@ class Application extends BaseApplication
      */
     private $container;
 
-    public function __construct(string $baseDir, string $name = 'UNKNOWN', string $version = 'UNKNOWN')
+    public function __construct(ContainerInterface $container, string $name = 'UNKNOWN', string $version = 'UNKNOWN')
     {
         parent::__construct($name, $version);
 
-        $this->baseDir = $baseDir;
-        $this->container = $this->prepareContainer();
-    }
-
-    /**
-     * Creates a path from the application root.
-     */
-    public function path(string $path = ''): string
-    {
-        return $this->baseDir . ($path !== '' ? '/' . $path : $path);
+        $this->container = $container;
     }
 
     public function registerCommand(string $command): Command
@@ -43,10 +34,5 @@ class Application extends BaseApplication
         ErrorHandler::register($logger);
 
         return $this;
-    }
-
-    protected function prepareContainer(): ContainerInterface
-    {
-        return require $this->path('bootstrap/container.php');
     }
 }
