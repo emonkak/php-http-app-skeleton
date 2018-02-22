@@ -3,12 +3,12 @@
 namespace App\Domain\Account;
 
 use App\Supports\Persistable;
+use App\Supports\PersistableInterface;
 use Emonkak\Database\PDOInterface;
 use Emonkak\Orm\Fetcher\ClassFetcher;
-use Emonkak\Orm\Fetcher\FetcherInterface;
 use Emonkak\Orm\SelectBuilder;
 
-class AccountRepository
+class AccountRepository implements PersistableInterface
 {
     use Persistable;
 
@@ -18,7 +18,7 @@ class AccountRepository
     private $pdo;
 
     /**
-     * @var FetcherInterface
+     * @var ClassFetcher
      */
     private $fetcher;
 
@@ -63,8 +63,8 @@ class AccountRepository
             ->firstOrDefault();
     }
 
-    public function store(Account $account): void
+    protected function getPdoForEntity(Account $account): PDOInterface
     {
-        $this->persist('accounts', $account, $this->pdo);
+        return $this->pdo;
     }
 }

@@ -2,40 +2,36 @@
 
 namespace App\Domain\Account;
 
-use App\Supports\Arrayable;
-use App\Supports\Timestampable;
+use App\Supports\Entity;
 
-class Account
+class Account extends Entity
 {
-    use Arrayable;
-    use Timestampable;
-
     /**
-     * @var integer
+     * @var string
      */
-    private $account_id;
+    protected $account_id;
 
     /**
      * @var string
      */
-    private $email_address;
+    protected $email_address;
 
     /**
      * @var string
      */
-    private $password;
+    protected $password;
 
-    public static function create(EmailAddress $emailAddress, Password $password)
+    public static function create(EmailAddress $email_address, Password $password): self
     {
         $account = new Account();
-        $account->setEmailAddress($emailAddress);
+        $account->setEmailAddress($email_address);
         $account->setPassword($password);
         return $account;
     }
 
     public function getAccountId(): int
     {
-        return $this->account_id;
+        return (int) $this->account_id;
     }
 
     public function getEmailAddress(): EmailAddress
@@ -48,17 +44,17 @@ class Account
         return new Password($this->password);
     }
 
-    private function setAccountId(int $account_id): void
+    protected function setAccountId(int $account_id): void
     {
-        $this->account_id = $account_id;
+        $this->account_id = (string) $account_id;
     }
 
-    private function setEmailAddress(EmailAddress $email_address): void
+    protected function setEmailAddress(EmailAddress $email_address): void
     {
         $this->email_address = $email_address->address();
     }
 
-    private function setPassword(Password $password): void
+    protected function setPassword(Password $password): void
     {
         $this->password = $password->hash();
     }

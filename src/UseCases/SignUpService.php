@@ -2,12 +2,13 @@
 
 namespace App\UseCases;
 
+use App\Domain\Account\Account;
+use App\Domain\Account\AccountRepository;
 use App\Domain\Account\EmailAddress;
 use App\Domain\Account\Password;
 use App\Domain\Account\PasswordPolicy;
-use App\Domain\Account\Account;
-use App\Domain\Account\AccountRepository;
 use App\Supports\Transactional;
+use App\Supports\UnitOfWork;
 use Emonkak\Database\PDOTransactionInterface;
 
 class SignUpService
@@ -49,7 +50,11 @@ class SignUpService
             throw new SignUpException('The password does not satisfied the password policy.');
         }
 
-        return $this->transaction(function() use ($emailAddress, $password) {
+        $unitOfWork = new UnitOfWork([
+            Account::class => $this->accountRepository
+        ]);
+
+        return $this->transaction(function() use ($emailAddress, $password, $unitOfWork) {
             $existingAccount = $this->accountRepository->lockedAccountOfEmail($emailAddress);
             if ($existingAccount !== null) {
                 throw new SignUpException('The email address is already use.');
@@ -60,7 +65,8 @@ class SignUpService
                 Password::generate($password)
             );
 
-            $this->accountRepository->store($account);
+            $unitOfWork->markedAsNew($account);
+            $unitOfWork->flush();
 
             return $account;
         });

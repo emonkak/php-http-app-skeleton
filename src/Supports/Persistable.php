@@ -3,38 +3,73 @@
 namespace App\Supports;
 
 use Emonkak\Database\PDOInterface;
+use Emonkak\Orm\DeleteBuilder;
 use Emonkak\Orm\InsertBuilder;
+use Emonkak\Orm\UpdateBuilder;
 
 trait Persistable
 {
-    public function persist(string $table, $entity, PDOInterface $pdo): void
+    public function persist(Entity $entity): void
     {
-        $array = $entity->toArray();
+        $idAttribute = $entity->getIdAttribute();
+        $tableName = $entity->getTableName();
+        $data = $entity->serializeArray();
+
+        $pdo = $this->getPdoForEntity($entity);
 
         (new InsertBuilder())
-            ->into($table, array_keys($array))
-            ->values(array_values($array))
+            ->into($tableName, array_keys($data))
+            ->values(array_values($data))
             ->execute($pdo);
 
         $ref = new \ReflectionObject($entity);
 
-        $idValue = $pdo->lastInsertId();
-        $idAttribute = snake_case($ref->getShortName()) . '_id';
-
         if ($ref->hasProperty($idAttribute)) {
-            $prop = $ref->getProperty($idAttribute);
-            $prop->setAccessible(true);
-            $prop->setValue($entity, $idValue);
-        }
-
-        $persistedAt = date('Y-m-d H:i:s');
-
-        foreach (['created_at', 'updated_at'] as $attribute) {
-            if ($ref->hasProperty($attribute)) {
-                $prop = $ref->getProperty($attribute);
-                $prop->setAccessible(true);
-                $prop->setValue($entity, $persistedAt);
-            }
+            $idValue = $pdo->lastInsertId();
+            $idProp = $ref->getProperty($idAttribute);
+            $idProp->setAccessible(true);
+            $idProp->setValue($entity, $idValue);
         }
     }
+
+    public function update(Entity $entity): void
+    {
+        $idAttribute = $entity->getIdAttribute();
+        $tableName = $entity->getTableName();
+        $data = $entity->serializeArray();
+
+        $ref = new \ReflectionObject($entity);
+        $idProp = $ref->getProperty($idAttribute);
+        $idProp->setAccessible(true);
+        $idValue = $idProp->getValue($entity);
+
+        $pdo = $this->getPdoForEntity($entity);
+
+        (new UpdateBuilder())
+            ->table($tableName)
+            ->setAll($data)
+            ->where($idAttribute, '=', $idValue)
+            ->execute($pdo);
+    }
+
+    public function delete(Entity $entity): void
+    {
+        $idAttribute = $entity->getIdAttribute();
+        $tableName = $entity->getTableName();
+        $data = $entity->serializeArray();
+
+        $ref = new \ReflectionObject($entity);
+        $idProp = $ref->getProperty($idAttribute);
+        $idProp->setAccessible(true);
+        $idValue = $idProp->getValue($entity);
+
+        $pdo = $this->getPdoForEntity($entity);
+
+        (new DeleteBuilder())
+            ->from($tableName)
+            ->where($idAttribute, '=', $idValue)
+            ->execute($pdo);
+    }
+
+    abstract protected function getPdoForEntity(Entity $entity): PDOInterface;
 }
