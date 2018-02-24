@@ -2,8 +2,8 @@
 
 namespace App\Domain\Account;
 
-use App\Supports\Persistable;
-use App\Supports\PersistableInterface;
+use App\Support\Persistable;
+use App\Support\PersistableInterface;
 use Emonkak\Database\PDOInterface;
 use Emonkak\Orm\Fetcher\ClassFetcher;
 use Emonkak\Orm\SelectBuilder;

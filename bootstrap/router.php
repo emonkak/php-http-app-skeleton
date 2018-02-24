@@ -1,6 +1,6 @@
 <?php
 
-use App\Adapters\Http\Handlers;
+use App\Adapter\Http\Handlers;
 use Emonkak\Router\TrieRouterBuilder;
 
 return (new TrieRouterBuilder())

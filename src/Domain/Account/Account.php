@@ -2,7 +2,7 @@
 
 namespace App\Domain\Account;
 
-use App\Supports\Entity;
+use App\Support\Entity;
 
 class Account extends Entity
 {
