@@ -5,7 +5,7 @@ namespace App\Domain\Account;
 use App\Support\Persistable;
 use App\Support\PersistableInterface;
 use Emonkak\Database\PDOInterface;
-use Emonkak\Orm\Fetcher\ClassFetcher;
+use Emonkak\Orm\Fetcher\ObjectFetcher;
 use Emonkak\Orm\SelectBuilder;
 
 class AccountRepository implements PersistableInterface
@@ -18,14 +18,14 @@ class AccountRepository implements PersistableInterface
     private $pdo;
 
     /**
-     * @var ClassFetcher
+     * @var ObjectFetcher
      */
     private $fetcher;
 
     public function __construct(PDOInterface $pdo)
     {
         $this->pdo = $pdo;
-        $this->fetcher = new ClassFetcher(Account::class);
+        $this->fetcher = new ObjectFetcher(Account::class);
     }
 
     public function allAccounts(): array
