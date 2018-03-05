@@ -2,7 +2,7 @@
 
 namespace App\Adapter\Http\Middlewares;
 
-use App\Support\Respondable;
+use App\Support\Http\Respondable;
 use Emonkak\HttpException\HttpExceptionInterface;
 use Emonkak\HttpMiddleware\ErrorHandlerInterface;
 use Emonkak\HttpMiddleware\ErrorMiddlewareInterface;

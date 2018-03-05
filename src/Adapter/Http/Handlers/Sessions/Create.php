@@ -2,12 +2,11 @@
 
 namespace App\Adapter\Http\Handlers\Sessions;
 
-use App\Support\Respondable;
-use App\Support\Validation\Rules;
-use App\Support\Validation\Validator;
-use App\Support\Validations;
-use App\UseCase\AuthenticationService;
 use Emonkak\HttpException\BadRequestHttpException;
+use Emonkak\Validation\Types;
+use Emonkak\Validation\Validator;
+use App\Support\Http\Respondable;
+use App\UseCase\AuthenticationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -47,11 +46,11 @@ class Create implements RequestHandlerInterface
     {
         $body = $request->getParsedBody();
 
-        $validation = Validations::shape([
-            'email_address' => 'is_string',
-            'password' => 'is_string',
-        ]);
-        if (!$validation($body)) {
+        $errors = (new Validator([
+            'email_address' => Types::string(),
+            'password' => Types::string(),
+        ]))->validate($body);
+        if ($errors->count() > 0) {
             throw new BadRequestHttpException();
         }
 

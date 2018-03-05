@@ -1,7 +1,7 @@
 version: '2'
 services:
-  php:
-    build: ./docker/php
+  app:
+    build: ./containers/app
     networks:
       - frontend
       - backend
@@ -10,8 +10,8 @@ services:
     ports:
       - "80:80"
 
-  mysql:
-    build: ./docker/mysql
+  db:
+    build: ./containers/db
     networks:
       - backend
     volumes:

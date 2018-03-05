@@ -1,26 +1,28 @@
 <?php
 
-namespace App\Support;
+namespace App\Support\Database;
 
 use Emonkak\Orm\DeleteBuilder;
 use Emonkak\Orm\InsertBuilder;
 use Emonkak\Orm\UpdateBuilder;
+use App\Support\Model\Entity;
+use App\Support\Model\EntityState;
 
 class UnitOfWork
 {
     /**
-     * @var array<string, PersistableInterface>
+     * @var array<string, mixed>
      */
-    private $persistables;
+    private $repositories;
 
     /**
      * @var SplObjectStorage
      */
     private $objects;
 
-    public function __construct(array $persistables)
+    public function __construct(array $repositories)
     {
-        $this->persistables = $persistables;
+        $this->repositories = $repositories;
         $this->objects = new \SplObjectStorage();
     }
 
@@ -69,7 +71,7 @@ class UnitOfWork
         foreach ($this->objects as $entity) {
             $entityState = $this->objects[$entity];
             $entityClass = get_class($entity);
-            $persistable = $this->persistables[$entityClass];
+            $persistable = $this->repositories[$entityClass];
 
             switch ($entityState) {
                 case EntityState::NEW:
@@ -91,7 +93,7 @@ class UnitOfWork
     {
         $entityClass = get_class($entity);
 
-        if (!isset($this->persistables[$entityClass])) {
+        if (!isset($this->repositories[$entityClass])) {
             throw new \InvalidArgumentException("'$entityClass' is not managed entity class in this unit of work.");
         }
     }

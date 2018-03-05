@@ -1,6 +1,6 @@
 FROM php:7.1-apache
 
-RUN apt-get update && apt-get install -y git libmemcached-dev zlib1g-dev \
+RUN apt-get update && apt-get install -y git libmemcached-dev mysql-client zlib1g-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

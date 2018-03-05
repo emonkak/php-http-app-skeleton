@@ -7,8 +7,8 @@ use App\Domain\Account\AccountRepository;
 use App\Domain\Account\EmailAddress;
 use App\Domain\Account\Password;
 use App\Domain\Account\PasswordPolicy;
-use App\Support\Transactional;
-use App\Support\UnitOfWork;
+use App\Support\Database\Transactional;
+use App\Support\Database\UnitOfWork;
 use Emonkak\Database\PDOTransactionInterface;
 
 class SignUpService

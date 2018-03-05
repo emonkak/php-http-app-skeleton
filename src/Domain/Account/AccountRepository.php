@@ -2,13 +2,12 @@
 
 namespace App\Domain\Account;
 
-use App\Support\Persistable;
-use App\Support\PersistableInterface;
+use App\Support\Database\Persistable;
 use Emonkak\Database\PDOInterface;
 use Emonkak\Orm\Fetcher\ObjectFetcher;
 use Emonkak\Orm\SelectBuilder;
 
-class AccountRepository implements PersistableInterface
+class AccountRepository
 {
     use Persistable;
 

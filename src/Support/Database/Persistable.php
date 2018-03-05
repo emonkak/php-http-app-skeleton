@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Support;
+namespace App\Support\Database;
 
 use Emonkak\Database\PDOInterface;
 use Emonkak\Orm\DeleteBuilder;
 use Emonkak\Orm\InsertBuilder;
 use Emonkak\Orm\UpdateBuilder;
+use App\Support\Model\Entity;
 
 trait Persistable
 {
@@ -34,6 +35,8 @@ trait Persistable
 
     public function update(Entity $entity): void
     {
+        $entity->touch();
+
         $idAttribute = $entity->getIdAttribute();
         $tableName = $entity->getTableName();
         $data = $entity->serializeArray();

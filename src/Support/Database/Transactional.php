@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support;
+namespace App\Support\Database;
 
 use Emonkak\Database\PDOTransactionInterface;
 

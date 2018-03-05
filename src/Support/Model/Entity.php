@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support;
+namespace App\Support\Model;
 
 abstract class Entity
 {
@@ -48,13 +48,7 @@ abstract class Entity
 
     public function serializeArray(): array
     {
-        $data = [];
-        foreach ($this as $attribute => $value) {
-            if ($value === null || is_scalar($value)) {
-                $data[$attribute] = $value;
-            }
-        }
-        return $data;
+        return get_object_vars($this);
     }
 
     protected function setCreatedAt(\DateTimeInterface $created_at): void

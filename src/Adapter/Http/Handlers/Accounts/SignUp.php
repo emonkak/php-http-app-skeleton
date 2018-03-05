@@ -2,7 +2,7 @@
 
 namespace App\Adapter\Http\Handlers\Accounts;
 
-use App\Support\Respondable;
+use App\Support\Http\Respondable;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
